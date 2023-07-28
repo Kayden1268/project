@@ -54,7 +54,7 @@ load_clf = pickle.load(open('trained_model.pkl', 'rb'))
 
 # Apply model to make predictions
 
-prediction = load_clf.predict(df)
+prediction = load_clf.predict(input_df)
 
 
 st.subheader('Prediction')
