@@ -1,48 +1,72 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import lightgbm as lgb
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import LabelEncoder
+from lightgbm import LGBMRegressor 
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from scipy import stats
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import GridSearchCV
 
-# Function to load the trained model
-def load_model():
-    return joblib.load("trained_lightgbm_model.joblib")
+st.write("""
+# House Price Prediction
 
-# Function to make predictions
-def predict_price(model, input_features):
-    return model.predict(input_features)
+""")
 
-def main():
-    st.title("House Price Prediction")
-    st.write("Enter the features of the house to get the estimated price.")
+st.sidebar.header('User Input Features')
 
-    # Load the trained model
-    model = load_model()
-    # Create input widgets for the user to enter the features of the house
-    UNDER_CONSTRUCTION = st.slider("UNDER_CONSTRUCTION", min_value=0, max_value=1, value=0, key="uc")
-    RERA = st.slider("RERA", min_value=0, max_value=1, value=0, key="rera")
-    BHK_NO = st.slider("BHK_NO.", min_value=1, max_value=5, value=2, key="bhk")
-    SQUARE_FT = st.slider("SQUARE_FT", min_value=500, max_value=5000, value=1500, step=100, key="sqft")
-    READY_TO_MOVE = st.slider("READY_TO_MOVE", min_value=0, max_value=1, value=1, key="rtm")
-    RESALE = st.slider("RESALE", min_value=0, max_value=1, value=1, key="resale")
-    BHK_OR_RK_BHK = st.slider("BHK_OR_RK_BHK", min_value=0, max_value=1, value=1, key="bhk_or_rk")
-    # Convert the input features to a DataFrame
-    input_features = {
-        "UNDER_CONSTRUCTION": UNDER_CONSTRUCTION,
-        "RERA": RERA,
-        "BHK_NO.": BHK_NO,
-        "SQUARE_FT": SQUARE_FT,
-        "READY_TO_MOVE": READY_TO_MOVE,
-        "RESALE": RESALE,
-        "BHK_OR_RK_BHK": BHK_OR_RK_BHK,
+ def user_input_features():
+    under_construction = st.radio("Under Construction", ["0", "1"])
+    rera_approved = st.radio("Rera Approved", ["0", "1"])
+    ready_to_move = st.radio("Ready to Move", ["0", "1"])
+    property_type = st.sidebar.radio('BHK Property Type', ["0", "1"])
+    resale = st.radio("Being Re-Sold", ["0", "1"])
+    number_of_rooms = st.sidebar.slider('Number of Rooms', 1, 5, 3)
+    area = st.sidebar.slider('Area of House(SQFT)', 500, 2000, 1000 )
+    data = {
+        'UNDER_CONSTRUCTION': under_construction,
+        'RERA': rera_approved,
+        'READY_TO_MOVE': ready_to_move,
+        'RESALE': resale,
+        'BHK_OR_RK_BHK': property_type,
+        'BHK_NO.': number_of_rooms,
+        'SQUARE_FT': area
     }
-    input_df = pd.DataFrame([input_features])
+    features = pd.DataFrame(data, index=[0])
+    return features
 
-    # Make predictions using the model
-    predicted_price = predict_price(model, input_df)
+input_df = user_input_features()
 
-    # Display the predicted price to the user
-    st.subheader("Predicted Price")
-    st.write(f"${predicted_price[0]:,.2f}")
 
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
+#combine user input features with entire dataset
+
+housing = pd.read_csv('Housing.csv')
+
+
+# Displays the user input features
+
+st.subheader('User Input Features')
+
+
+# Reads in saved classification model
+
+load_clf = pickle.load(open('trained_model.pkl', 'rb'))
+
+
+# Apply model to make predictions
+
+prediction = load_clf.predict(df)
+
+
+st.subheader('Prediction')
+
+st.write(prediction)
+
+
