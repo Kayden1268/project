@@ -22,7 +22,7 @@ st.write("""
 
 st.sidebar.header('User Input Features')
 
- def user_input_features():
+def user_input_features():
     under_construction = st.radio("Under Construction", ["0", "1"])
     rera_approved = st.radio("Rera Approved", ["0", "1"])
     ready_to_move = st.radio("Ready to Move", ["0", "1"])
