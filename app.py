@@ -17,10 +17,10 @@ from sklearn.model_selection import GridSearchCV
 
 st.write("""
 # House Price Prediction
+
 """)
 
 st.sidebar.header('User Input Features')
-
 def user_input_features():
     under_construction = st.radio("Under Construction", ["0", "1"])
     rera_approved = st.radio("Rera Approved", ["0", "1"])
@@ -28,7 +28,7 @@ def user_input_features():
     property_type = st.sidebar.radio('BHK Property Type', ["0", "1"])
     resale = st.radio("Being Re-Sold", ["0", "1"])
     number_of_rooms = st.sidebar.slider('Number of Rooms', 1, 5, 3)
-    area = st.sidebar.slider('Area of House(SQFT)', 500, 2000, 1000)
+    area = st.sidebar.slider('Area of House(SQFT)', 500, 2000, 1000 )
     data = {
         'UNDER_CONSTRUCTION': under_construction,
         'RERA': rera_approved,
@@ -44,25 +44,28 @@ def user_input_features():
 input_df = user_input_features()
 
 
-# Combine user input features with the entire dataset
+#combine user input features with entire dataset
+
 housing = pd.read_csv('Housing.csv')
 
+
 # Displays the user input features
+
 st.subheader('User Input Features')
 
-# Reads in the saved classification model
-load_clf = joblib.load(open('trained_model.pkl', 'rb'))
 
-# Apply the model to make predictions
-prediction = load_clf.predict(input_df)
+# Reads in saved classification model
+
+load_clf = pickle.load(open('trained_model.pkl', 'rb'))
+
+
+# Apply model to make predictions
+
+prediction = load_clf.predict(df)
+
 
 st.subheader('Prediction')
+
 st.write(prediction)
-
-
-
-
-
-
 
 
